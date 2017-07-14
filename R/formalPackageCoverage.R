@@ -5,10 +5,10 @@
 
 formalPackageCoverage <- function(pkg = ".") {
   unused_by_files <-
-    list.files(path = file.path(pkg, "R"),
-               pattern = "\\.R$",
-               full.names = TRUE) %>%
-    lapply(unused_formals)
+    lapply(list.files(path = file.path(pkg, "R"),
+                      pattern = "\\.R$",
+                      full.names = TRUE),
+           unused_formals)
   
   if (!is.null(unlist(unused_by_files))) {
     unused_by_files
