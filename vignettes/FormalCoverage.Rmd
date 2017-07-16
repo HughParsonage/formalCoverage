@@ -1,0 +1,98 @@
+---
+title: "Formal coverage"
+author: "Hugh Parsonage"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{FormalCoverage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitrOpts}
+library(knitr)
+pkgs_avbl <-
+  requireNamespace("testthat", quietly = TRUE) &&
+  requireNamespace("covr", quietly = TRUE)
+knitr::opts_chunk$set(eval = pkgs_avbl)
+```
+
+## Testing
+R package development is supported by a mature ecosystem of diagnostic tools to prevent bugs.
+Unit tests are available in base R and the package `testthat` by Hadley Wickham is commonly used.
+A unit test ensure that a function with a given set of inputs returns a known result and ensures this known result survive any changes to the function's code.
+
+### `testthat` and `covr`
+
+```{r test-that}
+add_numbers <- function(x, y) {
+  x + y
+}
+
+library(testthat)
+expect_equal(add_numbers(1, 1), 2)
+
+```
+
+However, unit tests do not ensure that *all* user inputs will result in correct code. Code coverage tools such as through the `covr` package complement unit tests by identifying any untested source code. 
+
+```{r code-cov}
+divide_numbers <- function(x, y) {
+  if (y == 0) {
+    stop("y cannot be zero.")
+  }
+  x / y
+}
+
+expect_equal(divide_numbers(12, 4), 3)
+
+library(covr)
+function_coverage(divide_numbers, 
+                  code = expect_equal(divide_numbers(12, 4), 3))
+```
+
+Yet even with unit testing satisfying 100\% code coverage, bugs may still occur. 
+
+```{r add3}
+add3 <- function(x, y, z = 0) {
+  x + y
+}
+
+expect_equal(add3(1, 1), 2)
+function_coverage(add3, 
+                  code = expect_equal(add3(1, 1), 2))
+```
+
+Despite having a unit test and 100\% coverage, the above function has a serious bug. 
+No testing suite can eliminate all bugs, the goal of this package is to identify a narrow set of bugs wherein a function has an argument available to the user but which is never invoked in the body of the argument.
+Whereas code coverage is used to tell whether all the lines in the *body* have been used in a test, `formal coverage' is used to tell whether all the *arguments* (or *formals*) of a function have been used in a test.
+
+### `unused_formals` 
+
+The function `unused_formals` takes a function and checks whether each argument is present in the body of the function.
+If any arguments are not present but ought to be, those arguments are returned.
+```{r unused_formals}
+library(formalCoverage)
+unused_formals(add3)
+```
+
+You can also supply a quoted version of the function, and specify the namespace:
+
+```{r unused_formals_testthat}
+unused_formals("expect_equal", ns = "testthat")
+```
+
+If all arguments are indeed used, the function returns `NULL` invisibly. 
+
+Lastly, a function `formalPackageCoverage()` is available. 
+It is run on the top level of your package directory, returning `NULL` if all the *exported* functions have formal coverage, or a named list of the offending functions and arguments otherwise. 
+
+## Limitations
+This package is immature and has limitations.
+In that spirit, the package is quite shy: if there is any doubt, the test will succeed.
+
+In particular, if the function's body contains `UseMethod`, the function is assumed to be covered.
+
+
+
+
