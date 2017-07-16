@@ -10,8 +10,15 @@ formalPackageCoverage(pkg = ".")
 \item{pkg}{Top level of package.}
 }
 \value{
-If no formals uncovered, returns \code{NULL}.
+If no formals uncovered, returns \code{NULL}. Otherwise, a named list: each list element is a function from
+the package namespace and each value of the list is the unused argument.
 }
 \description{
 Formal coverage of package
+}
+\details{
+N.B. The exported functions in the \code{NAMESPACE} file
+must be available in the namespace of the environment in which the function is run. That is,
+if you make an changes to your exported functions, 
+you must have build and installed the package to be tested prior to running this function.
 }
