@@ -4,10 +4,12 @@
 \alias{unused_formals}
 \title{Is every function argument used in its body?}
 \usage{
-unused_formals(fn)
+unused_formals(fn, ns = NULL)
 }
 \arguments{
 \item{fn}{A function.}
+
+\item{ns}{If \code{fn} is a character vector, the namespace to which \code{fn} belongs.}
 }
 \value{
 The arguments of \code{fn} that are not used or if all are indeed used \code{NULL} invisibly.
@@ -21,5 +23,4 @@ add3 <- function(x, y, z = 0) {
 }
 
 unused_formals(add3)
-
 }

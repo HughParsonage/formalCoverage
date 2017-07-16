@@ -1,10 +1,15 @@
 Package: formalCoverage
 Title: Tests Functions Source Code for Unused Arguments
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Hugh", "Parsonage", email = "hugh.parsonage@gmail.com", role = c("aut", "cre"))
-Description: Determines whether any arguments in functions have not been used.
-License: file LICENSE
+Description: Determines whether any arguments in functions have obviously not been used. Useful to avoid bugs that may otherwise evade diagnostic tools such as unit testing and code coverage.
+License: MIT + file LICENSE
+Imports: utils
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown,
+    covr
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

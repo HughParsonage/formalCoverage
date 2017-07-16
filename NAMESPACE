@@ -2,3 +2,4 @@
 
 export(formalPackageCoverage)
 export(unused_formals)
+importFrom(utils,getFromNamespace)
