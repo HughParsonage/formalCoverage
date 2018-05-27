@@ -4,10 +4,12 @@
 \alias{formalPackageCoverage}
 \title{Formal coverage of package}
 \usage{
-formalPackageCoverage(pkg = ".")
+formalPackageCoverage(pkg = ".", halt = FALSE)
 }
 \arguments{
 \item{pkg}{Top level of package.}
+
+\item{halt}{If \code{TRUE}, errors if any formals are unused.}
 }
 \value{
 If no formals uncovered, returns \code{NULL}. Otherwise, a named list: each list element is a function from

@@ -1,5 +1,6 @@
 #' Formal coverage of package
 #' @param pkg Top level of package.
+#' @param halt If \code{TRUE}, errors if any formals are unused.
 #' @return If no formals uncovered, returns \code{NULL}. Otherwise, a named list: each list element is a function from
 #' the package namespace and each value of the list is the unused argument.
 #' @details N.B. The exported functions in the \code{NAMESPACE} file
@@ -8,7 +9,7 @@
 #' you must have build and installed the package to be tested prior to running this function.
 #' @export
 
-formalPackageCoverage <- function(pkg = ".") {
+formalPackageCoverage <- function(pkg = ".", halt = FALSE) {
   NAMESPACE <- readLines(file.path(pkg, "NAMESPACE"))
   DESCRIPTION <- readLines(file.path(pkg, "DESCRIPTION"))
   stopifnot(grepl("Package: ", DESCRIPTION[1]))
@@ -25,7 +26,25 @@ formalPackageCoverage <- function(pkg = ".") {
   if (!is.null(unlist(unused_by_files))) {
     names(unused_by_files) <- funs
     are_null <- vapply(unused_by_files, is.null, FALSE)
-    unused_by_files[!are_null]
+    res <- unused_by_files[!are_null]
+    if (halt) {
+      printer <- function(X) {
+        out <- "\n"
+        for (i in seq_along(X)) {
+          out <- c(out, names(X)[i], "():")
+          for (j in seq_along(X[[i]])) {
+            out <- c(out, "\n\t", X[[i]])
+          }
+          out <- c(out, "\n")
+        }
+        out
+      }
+      
+      stop("Following functions have arguments that may be unused: ",
+           printer(res))
+    } else {
+      res
+    }
   }
 }
 
